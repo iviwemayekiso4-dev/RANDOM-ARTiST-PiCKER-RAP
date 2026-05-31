@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Music Roulette</title>
+    <style>
+        :root {
+            --bg-color: #2c1d11;       /* Deep roasted coffee brown background */
+            --card-bg: #3d2b1f;       /* Warm chocolate brown card background */
+            --accent-color: #c68642;   /* Smooth caramel accent button color */
+            --accent-hover: #b07231;   /* Darker caramel for hover states */
+            --text-color: #fdfaf7;     /* Soft warm cream text */
+            --text-muted: #b5a499;     /* Muted taupe for counters and headers */
+            --border-color: #523b2c;   /* Subtle earth-toned dividers */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #21140a;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--accent-color);
+            color: #21140a;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-roulette {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #c68642, #8e5822);
+            color: #fdfaf7;
+            margin-bottom: 25px;
+        }
+
+        .btn-roulette:hover {
+            background: linear-gradient(135deg, #b07231, #754415);
+        }
+
+        .result-box {
+            background-color: #21140a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 2px dashed var(--border-color);
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .result-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            animation: popIn 0.3s ease-out;
+        }
+
+        .artist-list-container {
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .artist-list-container h3 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .delete-btn {
+            background: none;
+            color: #b94a4a;
+            padding: 2px 8px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(185, 74, 74, 0.1);
+            color: #ef4444;
+        }
+
+        /* Quick Animation for the generator */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #21140a; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎵 Music Roulette</h1>
+
+        <button class="btn-roulette" id="pickBtn">What should I listen to?</button>
+
+        <div class="result-box">
+            <div class="result-title" id="resultTitle">Roll the dice...</div>
+            <div class="result-name" id="resultName">---</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="artistInput" placeholder="Add new artist...">
+            <button id="addBtn">Add</button>
+        </div>
+
+        <div class="artist-list-container">
+            <h3>Your Pool (<span id="count">0</span>)</h3>
+            <ul id="artistList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const artistInput = document.getElementById('artistInput');
+        const addBtn = document.getElementById('addBtn');
+        const pickBtn = document.getElementById('pickBtn');
+        const artistList = document.getElementById('artistList');
+        const countSpan = document.getElementById('count');
+        const resultTitle = document.getElementById('resultTitle');
+        const mainResultName = document.getElementById('resultName');
+
+        // Load initial data from LocalStorage or default to empty array
+        let artists = JSON.parse(localStorage.getItem('myArtists')) || [];
+
+        // App Initializer
+        function init() {
+            renderList();
+            
+            // Event Listeners
+            addBtn.addEventListener('click', addArtist);
+            artistInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addArtist();
+            });
+            pickBtn.addEventListener('click', pickRandomArtist);
+        }
+
+        // Render the list to the screen
+        function renderList() {
+            artistList.innerHTML = '';
+            countSpan.textContent = artists.length;
+
+            artists.forEach((artist, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${artist}</span>
+                    <button class="delete-btn" onclick="deleteArtist(${index})">Remove</button>
+                `;
+                artistList.appendChild(li);
+            });
+
+            // Save to LocalStorage every time list changes
+            localStorage.setItem('myArtists', JSON.stringify(artists));
+        }
+
+        // Add Artist
+        function addArtist() {
+            const name = artistInput.value.trim();
+            
+            if (name === '') return;
+            
+            if (artists.some(a => a.toLowerCase() === name.toLowerCase())) {
+                alert('That artist is already in your pool!');
+                return;
+            }
+
+            artists.push(name);
+            artistInput.value = '';
+            renderList();
+        }
+
+        // Delete Artist
+        window.deleteArtist = function(index) {
+            artists.splice(index, 1);
+            renderList();
+        }
+
+        // Pick Random Artist with a slight delay effect
+        function pickRandomArtist() {
+            if (artists.length === 0) {
+                resultTitle.textContent = "Error";
+                mainResultName.textContent = "Pool is empty!";
+                return;
+            }
+
+            resultTitle.textContent = "Shuffling...";
+            mainResultName.textContent = "🎲";
+
+            // Small 400ms timeout to make the pick feel dynamic
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * artists.length);
+                resultTitle.textContent = "Today's Vibe:";
+                mainResultName.textContent = artists[randomIndex];
+            }, 400);
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
